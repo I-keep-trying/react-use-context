@@ -1,55 +1,52 @@
 import React, { useReducer, createContext } from 'react'
+import countries from '../countriesList'
+import regions from '../regions'
 
 export const ContactContext = createContext()
 
 const initialState = {
-  contacts: [
-    {
-      id: '098',
-      name: 'Diana Prince',
-      email: 'diana@us.army.mil',
-    },
-    {
-      id: '099',
-      name: 'Bruce Wayne',
-      email: 'bruce@batmail.com',
-    },
-    {
-      id: '100',
-      name: 'Clark Kent',
-      email: 'clark@metropolitan.com',
-    },
-  ],
+  countries: countries,
+  regions: regions,
+  subregions: [],
   loading: false,
   error: null,
 }
 
 const reducer = (state, action) => {
+  console.log('context state', state)
+  console.log('context initialState', initialState)
   switch (action.type) {
-    case 'ADD_CONTACT':
-      console.log('action.payload', action.payload)
+    case 'FIND_COUNTRY':
       return {
-        contacts: [...state.contacts, action.payload],
-      }
-    case 'DEL_CONTACT':
-      console.log('action.payload', action.payload)
-
-      return {
-        contacts: state.contacts.filter(
-          (contact) => contact.id !== action.payload
-        ),
-      }
-    case 'FIND_CONTACT':
-      console.log('action.payload', action.payload)
-
-      return {
-        contacts: state.contacts.filter((contact) => {
-          console.log('contact', contact)
-          return contact.name
+        ...initialState,
+        countries: initialState.countries.filter((country) => {
+          return country.name
             .toLowerCase()
-            .startsWith(action.payload.toLowerCase())
+            .startsWith(action.payload.name.toLowerCase())
         }),
       }
+    case 'SELECT_REGION':
+      console.log('SELECT_REGION action.payload', action.payload)
+      console.log('SELECT_REGION state', state)
+
+      return {
+        ...initialState,
+        countries: initialState.countries.filter((country) => {
+          return country.region === action.payload
+        }),
+        subregions: initialState.regions.filter((region) => {
+          return region.region === action.payload ? region.subregions : []
+        }),
+      }
+    case 'SELECT_SUBREGION':
+      return {
+        ...initialState,
+        countries: initialState.countries.filter((country) => {
+          return country.subregion === action.payload
+        }),
+      }
+    case 'RESET':
+      return initialState
     case 'START':
       return {
         loading: true,

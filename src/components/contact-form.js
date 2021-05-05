@@ -1,29 +1,16 @@
 import React, { useState, useContext } from 'react'
 import { Segment, Form, Input, Button } from 'semantic-ui-react'
-import { nanoid } from 'nanoid'
 import { ContactContext } from '../context/contact-context'
 
 export default function ContactForm() {
-  const name = useFormInput('')
-  const email = useFormInput('')
   const search = useFormInput('')
 
   const [state, dispatch] = useContext(ContactContext)
-  console.log('state', state)
-  const onSubmit = () => {
-    dispatch({
-      type: 'ADD_CONTACT',
-      payload: { id: nanoid(), name: name.value, email: email.value },
-    })
-    // Reset Form
-    name.onReset()
-    email.onReset()
-  }
-
+  console.log('contact-form state', state)
   const onSearchSubmit = () => {
     dispatch({
-      type: 'FIND_CONTACT',
-      payload: { name: name.value },
+      type: 'FIND_COUNTRY',
+      payload: { name: search.value },
     })
 
     search.onReset()
@@ -32,29 +19,19 @@ export default function ContactForm() {
   return (
     <Segment basic>
       <Form onSubmit={onSearchSubmit}>
-        <Form.Group widths="3">
-          <Form.Field width={6}>
-            <Input placeholder="Enter Name" {...name} required />
+        <Form.Group>
+          <Form.Field>
+            <Input placeholder="Search Country" {...search} />
           </Form.Field>
 
-          <Form.Field width={4}>
+          <Form.Field>
             <Button fluid primary>
-              Find Contact
+              Find Country
             </Button>
           </Form.Field>
-        </Form.Group>
-      </Form>
-      <Form onSubmit={onSubmit}>
-        <Form.Group widths="3">
-          <Form.Field width={6}>
-            <Input placeholder="Enter Name" {...name} required />
-          </Form.Field>
-          <Form.Field width={6}>
-            <Input placeholder="Enter Email" {...email} type="email" required />
-          </Form.Field>
-          <Form.Field width={4}>
-            <Button fluid primary>
-              New Contact
+          <Form.Field>
+            <Button onClick={() => search.onReset()} fluid primary>
+              Reset
             </Button>
           </Form.Field>
         </Form.Group>
@@ -71,7 +48,7 @@ function useFormInput(initialValue) {
   }
 
   const handleReset = () => {
-    setValue('')
+    setValue(initialValue)
   }
 
   return {

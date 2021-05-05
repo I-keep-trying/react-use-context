@@ -8,9 +8,8 @@ export default function Contacts() {
   return (
     <ContactContextProvider>
       <Segment basic>
-        <Header as="h3">Contacts</Header>
-        <ContactForm />
-        <ContactTable />
+{/*         <ContactForm />
+ */}        <ContactTable />
       </Segment>
     </ContactContextProvider>
   );
