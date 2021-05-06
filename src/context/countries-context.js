@@ -2,42 +2,39 @@ import React, { useReducer, createContext } from 'react'
 import countries from '../countriesList'
 import regions from '../regions'
 
-export const ContactContext = createContext()
+export const CountriesContext = createContext()
 
 const initialState = {
   countries: countries,
   regions: regions,
   subregions: [],
+  unit: 'metric',
+  weather: {},
   loading: false,
   error: null,
 }
 
 const reducer = (state, action) => {
-  console.log('context state', state)
-  console.log('context initialState', initialState)
   switch (action.type) {
     case 'FIND_COUNTRY':
       return {
         ...initialState,
         countries: initialState.countries.filter((country) => {
-          return country.name
-            .toLowerCase()
-            .startsWith(action.payload.name.toLowerCase())
+          return country.id === action.payload
         }),
       }
     case 'SELECT_REGION':
-      console.log('SELECT_REGION action.payload', action.payload)
-      console.log('SELECT_REGION state', state)
-
-      return {
-        ...initialState,
-        countries: initialState.countries.filter((country) => {
-          return country.region === action.payload
-        }),
-        subregions: initialState.regions.filter((region) => {
-          return region.region === action.payload ? region.subregions : []
-        }),
-      }
+      return action.payload === 'All'
+        ? { ...initialState }
+        : {
+            ...initialState,
+            countries: initialState.countries.filter((country) => {
+              return country.region === action.payload
+            }),
+            subregions: initialState.regions.filter((region) => {
+              return region.region === action.payload ? region.subregions : []
+            }),
+          }
     case 'SELECT_SUBREGION':
       return {
         ...initialState,
@@ -47,6 +44,16 @@ const reducer = (state, action) => {
       }
     case 'RESET':
       return initialState
+    case 'SET_UNIT':
+      return {
+        ...initialState,
+        unit: action.payload === 'metric' ? 'metric' : 'imperial',
+      }
+    case 'SET_WEATHER':
+      return {
+        ...state,
+        weather: action.payload,
+      }
     case 'START':
       return {
         loading: true,
@@ -60,12 +67,12 @@ const reducer = (state, action) => {
   }
 }
 
-export const ContactContextProvider = (props) => {
+export const CountriesContextProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
   return (
-    <ContactContext.Provider value={[state, dispatch]}>
+    <CountriesContext.Provider value={[state, dispatch]}>
       {props.children}
-    </ContactContext.Provider>
+    </CountriesContext.Provider>
   )
 }

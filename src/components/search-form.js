@@ -1,12 +1,11 @@
 import React, { useState, useContext } from 'react'
 import { Segment, Form, Input, Button } from 'semantic-ui-react'
-import { ContactContext } from '../context/contact-context'
+import { CountriesContext } from '../context/countries-context'
 
 export default function ContactForm() {
   const search = useFormInput('')
-
-  const [state, dispatch] = useContext(ContactContext)
-  console.log('contact-form state', state)
+  const [state, dispatch] = useContext(CountriesContext)
+  console.log('search-form state', state)
   const onSearchSubmit = () => {
     dispatch({
       type: 'FIND_COUNTRY',
